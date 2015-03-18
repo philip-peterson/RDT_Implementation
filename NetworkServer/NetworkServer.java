@@ -8,9 +8,10 @@ public class NetworkServer {
       public static int SOCKET_NR = 65003;
 
       /* Return Codes */
-      public static int RC_ERR_SOCKALLOC = 1;
-      public static int RC_ERR_SOCKACCEPT = 2;
-      public static int RC_ERR_SOCKIO = 3;
+      public static int RC_ERR_SOCKALLOC    = 1;
+      public static int RC_ERR_SOCKACCEPT   = 2;
+      public static int RC_ERR_SOCKIO       = 3;
+      public static int RC_ERR_WRONG_CLIENT = 4;
 
    /* End static vars */
 
@@ -66,7 +67,9 @@ public class NetworkServer {
     * @param boolean isReceiver false if sender, true if receiver
     */
    public void doAwaitConnection(boolean isReceiver) {
-      System.out.println(String.format("Waiting for connection from %s...", isReceiver ? "receiver" : "sender"));
+      String clientName = isReceiver ? "receiver" : "sender";
+
+      System.out.println(String.format("Waiting for connection from %s...", clientName));
       Socket sock = this.acceptConnectionOrDie();
 
       DataOutputStream out = null;
@@ -75,6 +78,14 @@ public class NetworkServer {
       try {
          out = new DataOutputStream(sock.getOutputStream());
          in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+
+         String ident = in.readLine();
+         if (!ident.equals(clientName)) {
+            System.err.println(
+               String.format("Expected %s to connect, but something else connected. Quitting.", clientName)
+            );
+            System.exit(RC_ERR_WRONG_CLIENT);
+         }
       }
       catch (IOException e) {
          this.ioError(e);

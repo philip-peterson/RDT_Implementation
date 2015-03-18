@@ -13,6 +13,5 @@ public class NetworkServerSenderThread extends NetworkServerThread {
    }
 
    public void run() {
-
    }
 }
