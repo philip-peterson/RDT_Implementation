@@ -12,11 +12,11 @@
       <mkdir dir='build/classes/NetworkServer' />
       <javac srcdir='NetworkServer' destdir='build/classes/NetworkServer' />
 
-      <mkdir dir='build/classes/SenderServer' />
-      <javac srcdir='SenderServer' destdir='build/classes/SenderServer' />
+      <mkdir dir='build/classes/Sender' />
+      <javac srcdir='Sender' destdir='build/classes/Sender' />
 
-      <mkdir dir='build/classes/ReceiverServer' />
-      <javac srcdir='ReceiverServer' destdir='build/classes/ReceiverServer' />
+      <mkdir dir='build/classes/Receiver' />
+      <javac srcdir='Receiver' destdir='build/classes/Receiver' />
    </target>
 
    <target name='jar'>
