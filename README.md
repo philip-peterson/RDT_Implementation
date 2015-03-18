@@ -21,7 +21,7 @@ java -jar build/jar/NetworkServer.jar
 Receiver
 --------
 
-Start this server first; it will run while the Receiver and Sender connect to it.
+Start this client first; otherwise, the server will think you are the sender and all heck will break loose!
 
 ```
 java -jar build/jar/Receiver.jar
@@ -30,6 +30,7 @@ java -jar build/jar/Receiver.jar
 Sender
 --------
 
+Start this client second; otherwise, the apocalyptic scenario described above applies.
 ```
 java -jar build/jar/Sender.jar
 ```
