@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<project>
+   <presetdef name='javac'>
+      <javac includeantruntime='false' />
+   </presetdef>
+
+   <target name='clean'>
+      <delete dir='build' />
+   </target>
+
+   <target name='compile'>
+      <mkdir dir='build/classes/NetworkServer' />
+      <javac srcdir='NetworkServer' destdir='build/classes/NetworkServer' />
+
+      <mkdir dir='build/classes/SenderServer' />
+      <javac srcdir='SenderServer' destdir='build/classes/SenderServer' />
+
+      <mkdir dir='build/classes/ReceiverServer' />
+      <javac srcdir='ReceiverServer' destdir='build/classes/ReceiverServer' />
+   </target>
+
+   <target name='jar'>
+      <mkdir dir='build/jar' />
+      <jar destfile='build/jar/NetworkServer.jar' basedir='build/classes/NetworkServer'>
+         <manifest>
+            <attribute name='Main-Class' value='NetworkServer' />
+         </manifest>
+      </jar>
+   </target>
+</project>
