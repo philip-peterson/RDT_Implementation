@@ -58,22 +58,8 @@ public class NetworkServer {
    }
 
    public void run() {
-      System.out.println("Waiting for connection from receiver...");
-      Socket receiverSock = this.acceptConnectionOrDie();
-
-      DataOutputStream rcvOut = null;
-      BufferedReader rcvIn = null;
-
-      try {
-         rcvOut = new DataOutputStream(receiverSock.getOutputStream());
-         rcvIn = new BufferedReader(new InputStreamReader(receiverSock.getInputStream()));
-      }
-      catch (IOException e) {
-         this.ioError(e);
-      }
-      receiverThread = new NetworkServerReceiverThread(receiverSock, rcvIn, rcvOut, this);
-      receiverThread.start();
-
+      doAwaitConnection(true);
+      doAwaitConnection(false);
    }
 
    /**
