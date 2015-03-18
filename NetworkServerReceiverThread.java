@@ -3,6 +3,15 @@ import java.io.DataOutputStream;
 import java.net.Socket;
 
 public class NetworkServerReceiverThread extends NetworkServerThread {
+   public NetworkServerReceiverThread(
+         Socket sock,
+         BufferedReader reader,
+         DataOutputStream writer,
+         NetworkServer ns
+      ) {
+      super(sock, reader, writer, ns);
+   }
+
    public void run() {
 
    }

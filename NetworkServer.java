@@ -1,9 +1,6 @@
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketTimeoutException;
-import java.io.IOException;
-
-import java.nio.channels.IllegalBlockingModeException;
+import java.net.*;
+import java.io.*;
+import java.nio.channels.*;
 
 public class NetworkServer {
    /* Static vars */
@@ -13,6 +10,7 @@ public class NetworkServer {
       /* Return Codes */
       public static int RC_ERR_SOCKALLOC = 1;
       public static int RC_ERR_SOCKACCEPT = 2;
+      public static int RC_ERR_SOCKIO = 3;
 
    /* End static vars */
 
@@ -31,7 +29,7 @@ public class NetworkServer {
       return s;
    }
 
-   private Socket getSocketOrDie() {
+   private Socket acceptConnectionOrDie() {
       Socket s = null;
       try {
          s = serverSock.accept();
@@ -54,14 +52,56 @@ public class NetworkServer {
       this.serverSock = serverSock;
    }
 
+   public void ioError(IOException e) {
+      System.err.println("Error: I/O -- " + e.getMessage());
+      System.exit(RC_ERR_SOCKIO);
+   }
+
    public void run() {
       System.out.println("Waiting for connection from receiver...");
       Socket receiverSock = this.acceptConnectionOrDie();
-      //receiverThread = new ServerSocketReceiverThread();
 
-      System.out.println("Waiting for connection from sender...");
-      Socket senderSock = this.acceptConnectionOrDie();
-      //senderThread = new ServerSocketSenderThread();
+      DataOutputStream rcvOut = null;
+      BufferedReader rcvIn = null;
+
+      try {
+         rcvOut = new DataOutputStream(receiverSock.getOutputStream());
+         rcvIn = new BufferedReader(new InputStreamReader(receiverSock.getInputStream()));
+      }
+      catch (IOException e) {
+         this.ioError(e);
+      }
+      receiverThread = new NetworkServerReceiverThread(receiverSock, rcvIn, rcvOut, this);
+      receiverThread.start();
+
+   }
+
+   /**
+    * @param boolean isReceiver false if sender, true if receiver
+    */
+   public void doAwaitConnection(boolean isReceiver) {
+      System.out.println(String.format("Waiting for connection from %s...", isReceiver ? "receiver" : "sender"));
+      Socket sock = this.acceptConnectionOrDie();
+
+      DataOutputStream out = null;
+      BufferedReader in = null;
+
+      try {
+         out = new DataOutputStream(sock.getOutputStream());
+         in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+      }
+      catch (IOException e) {
+         this.ioError(e);
+      }
+
+      Thread thread;
+      if (isReceiver) {
+         thread = new NetworkServerReceiverThread(sock, in, out, this);
+      }
+      else {
+         thread = new NetworkServerSenderThread(sock, in, out, this);
+      }
+      thread.start();
    }
 
    public static void main(String[] args ) {
