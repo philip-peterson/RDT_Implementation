@@ -1,6 +1,7 @@
 import java.net.*;
 import java.io.*;
 import java.nio.channels.*;
+import java.nio.charset.*;
 
 public class NetworkServer {
    /* Static vars */
@@ -72,17 +73,17 @@ public class NetworkServer {
       System.out.println(String.format("Waiting for connection from %s...", clientName));
       Socket sock = this.acceptConnectionOrDie();
 
-      DataOutputStream out = null;
+      PrintWriter out = null;
       BufferedReader in = null;
 
       try {
-         out = new DataOutputStream(sock.getOutputStream());
-         in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+         out = new PrintWriter(new OutputStreamWriter(sock.getOutputStream(), Charset.forName("UTF-8")), true);
+         in = new BufferedReader(new InputStreamReader(sock.getInputStream(), Charset.forName("UTF-8")));
 
          String ident = in.readLine();
-         if (!ident.equals(clientName)) {
+         if (ident == null || !ident.equals(clientName)) {
             System.err.println(
-               String.format("Expected %s to connect, but something else connected. Quitting.", clientName)
+               String.format("Expected %s to connect, but something else (%s,%d,%d)happened. Quitting.", clientName, ident, clientName.length(), ident.length())
             );
             System.exit(RC_ERR_WRONG_CLIENT);
          }
@@ -90,6 +91,7 @@ public class NetworkServer {
       catch (IOException e) {
          this.ioError(e);
       }
+
 
       Thread thread;
       if (isReceiver) {

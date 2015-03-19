@@ -1,17 +1,17 @@
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
 
 public class NetworkServerThread extends Thread {
    protected Socket sock;
    protected BufferedReader reader;
-   protected DataOutputStream writer;
+   protected PrintWriter writer;
    protected NetworkServer ns;
 
    public NetworkServerThread(
          Socket sock,
          BufferedReader reader,
-         DataOutputStream writer,
+         PrintWriter writer,
          NetworkServer ns
       ) {
       this.sock = sock;

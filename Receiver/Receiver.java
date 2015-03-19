@@ -1,5 +1,6 @@
 import java.net.*;
 import java.io.*;
+import java.nio.charset.*;
 
 public class Receiver {
    /* Return codes */
@@ -7,9 +8,16 @@ public class Receiver {
    public static int RC_ERR_IO = 2;
    public static int RC_ERR_UNKNOWN_HOST = 3;
 
+   /* private vars */
+   private String host;
+   private int port;
+   private PrintWriter out;
+   private BufferedReader in;
+
    public void run(String host, int port) {
+      Socket clientSocket = null;
       try {
-         Socket clientSocket = new Socket(host, port);
+         clientSocket = new Socket(host, port);
       }
       catch (UnknownHostException e) {
          System.err.println("Error: Unknown host. Exiting.");
@@ -18,10 +26,17 @@ public class Receiver {
       catch (IOException e) {
          this.ioError();
       }
-   }
 
-   private String host;
-   private int port;
+      try {
+         out = new PrintWriter(new OutputStreamWriter(clientSocket.getOutputStream(), Charset.forName("UTF-8")), true);
+         in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), Charset.forName("UTF-8")));
+         out.println("receiver");
+      }
+      catch (IOException e) {
+         this.ioError();
+      }
+
+   }
 
    public Receiver(String host, int port) {
       this.port = port;
