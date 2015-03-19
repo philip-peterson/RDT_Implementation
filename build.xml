@@ -26,5 +26,15 @@
             <attribute name='Main-Class' value='NetworkServer' />
          </manifest>
       </jar>
+      <jar destfile='build/jar/Sender.jar' basedir='build/classes/Sender'>
+         <manifest>
+            <attribute name='Main-Class' value='Sender' />
+         </manifest>
+      </jar>
+      <jar destfile='build/jar/Receiver.jar' basedir='build/classes/Receiver'>
+         <manifest>
+            <attribute name='Main-Class' value='Receiver' />
+         </manifest>
+      </jar>
    </target>
 </project>
