@@ -83,7 +83,7 @@ public class NetworkServer {
          String ident = in.readLine();
          if (ident == null || !ident.equals(clientName)) {
             System.err.println(
-               String.format("Expected %s to connect, but something else (%s,%d,%d)happened. Quitting.", clientName, ident, clientName.length(), ident.length())
+               String.format("Expected %s to connect, but something else happened. Quitting.", clientName)
             );
             System.exit(RC_ERR_WRONG_CLIENT);
          }
