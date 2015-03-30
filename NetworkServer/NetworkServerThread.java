@@ -4,19 +4,19 @@ import java.net.Socket;
 
 public class NetworkServerThread extends Thread {
    protected Socket sock;
-   protected BufferedReader reader;
-   protected PrintWriter writer;
+   protected InputStream in;
+   protected OutputStream out;
    protected NetworkServer ns;
 
    public NetworkServerThread(
          Socket sock,
-         BufferedReader reader,
-         PrintWriter writer,
+         InputStream in,
+         OutputStream out,
          NetworkServer ns
       ) {
       this.sock = sock;
-      this.reader = reader;
-      this.writer = writer;
+      this.in = in;
+      this.out = out;
       this.ns = ns;
    }
 }

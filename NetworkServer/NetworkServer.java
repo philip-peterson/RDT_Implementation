@@ -73,15 +73,15 @@ public class NetworkServer {
       System.out.println(String.format("Waiting for connection from %s...", clientName));
       Socket sock = this.acceptConnectionOrDie();
 
-      PrintWriter out = null;
-      BufferedReader in = null;
+      OutputStream out = null;
+      InputStream in = null;
 
       try {
-         out = new PrintWriter(new OutputStreamWriter(sock.getOutputStream(), Charset.forName("UTF-8")), true);
-         in = new BufferedReader(new InputStreamReader(sock.getInputStream(), Charset.forName("UTF-8")));
+         out = sock.getOutputStream();
+         in = sock.getInputStream();
 
-         String ident = in.readLine();
-         if (ident == null || !ident.equals(clientName)) {
+         int ident = in.read();
+         if (ident == (int)isReceiver) {
             System.err.println(
                String.format("Expected %s to connect, but something else happened. Quitting.", clientName)
             );

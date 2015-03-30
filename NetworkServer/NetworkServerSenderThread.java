@@ -5,8 +5,8 @@ import java.net.Socket;
 public class NetworkServerSenderThread extends NetworkServerThread {
    public NetworkServerSenderThread(
          Socket sock,
-         BufferedReader reader,
-         PrintWriter writer,
+         InputStream in,
+         OutputStream out,
          NetworkServer ns
       ) {
       super(sock, reader, writer, ns);

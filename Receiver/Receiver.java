@@ -11,8 +11,6 @@ public class Receiver {
    /* private vars */
    private String host;
    private int port;
-   private PrintWriter out;
-   private BufferedReader in;
 
    public void run(String host, int port) {
       Socket clientSocket = null;
@@ -28,8 +26,6 @@ public class Receiver {
       }
 
       try {
-         out = new PrintWriter(new OutputStreamWriter(clientSocket.getOutputStream(), Charset.forName("UTF-8")), true);
-         in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), Charset.forName("UTF-8")));
          out.println("receiver");
       }
       catch (IOException e) {

@@ -5,11 +5,11 @@ import java.net.Socket;
 public class NetworkServerReceiverThread extends NetworkServerThread {
    public NetworkServerReceiverThread(
          Socket sock,
-         BufferedReader reader,
-         PrintWriter writer,
+         InputStream reader,
+         OutputStream writer,
          NetworkServer ns
       ) {
-      super(sock, reader, writer, ns);
+      super(sock, in, out, ns);
    }
 
    public void run() {
