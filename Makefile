@@ -1,9 +1,10 @@
-.PHONY : default compile makelinks
+.PHONY : default compile makelinks clean
 
 default: compile makelinks
 
-compile: */*.java
-	javac */*.java -d build/
+compile: src/*/*.java
+	mkdir build
+	javac src/*/*.java -d build/
 
 makelinks: compile
 	@echo Making links
@@ -14,3 +15,6 @@ makelinks: compile
 	@echo java -cp build/ Receiver '$$@' >> receiver
 	@echo java -cp build/ Sender '$$@' >> sender
 	chmod +x network receiver sender 
+
+clean:
+	rm -r build

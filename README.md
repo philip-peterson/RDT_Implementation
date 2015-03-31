@@ -2,8 +2,7 @@ To build
 ========
 
 ```
-ant compile
-ant jar
+make
 ```
 
 To run
@@ -15,7 +14,7 @@ Network server
 Start this server first; it will run while the Receiver and Sender connect to it.
 
 ```
-java -jar build/jar/NetworkServer.jar
+./network 1337
 ```
 
 Receiver
@@ -24,7 +23,7 @@ Receiver
 Start this client first; otherwise, the server will think you are the sender and all heck will break loose!
 
 ```
-java -jar build/jar/Receiver.jar
+./receiver localhost 1337
 ```
 
 Sender
@@ -32,5 +31,5 @@ Sender
 
 Start this client second; otherwise, the apocalyptic scenario described above applies.
 ```
-java -jar build/jar/Sender.jar
+./sender localhost 1337
 ```
