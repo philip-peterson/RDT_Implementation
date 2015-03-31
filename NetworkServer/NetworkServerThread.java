@@ -1,6 +1,7 @@
-import java.io.BufferedReader;
-import java.io.PrintWriter;
-import java.net.Socket;
+import java.net.*;
+import java.io.*;
+import java.nio.channels.*;
+import java.nio.charset.*;
 
 public class NetworkServerThread extends Thread {
    protected Socket sock;

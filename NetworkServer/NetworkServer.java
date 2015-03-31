@@ -8,12 +8,6 @@ public class NetworkServer {
 
       public static int SOCKET_NR = 65003;
 
-      /* Return Codes */
-      public static int RC_ERR_SOCKALLOC    = 1;
-      public static int RC_ERR_SOCKACCEPT   = 2;
-      public static int RC_ERR_SOCKIO       = 3;
-      public static int RC_ERR_WRONG_CLIENT = 4;
-
    /* End static vars */
 
    public Thread receiverThread = null;
@@ -26,7 +20,7 @@ public class NetworkServer {
       }
       catch (IOException|SecurityException e) {
          System.err.println(String.format("Error: Could not make socket on port %d", port));
-         System.exit(RC_ERR_SOCKALLOC);
+         System.exit(ExitCodes.SOCKALLOC);
       }
       return s;
    }
@@ -43,7 +37,7 @@ public class NetworkServer {
             e
          ) {
          System.err.println("Error: Could not accept connection: " + e.getMessage());
-         System.exit(RC_ERR_SOCKACCEPT);
+         System.exit(ExitCodes.SOCKACCEPT);
       }
       return s;
    }
@@ -56,7 +50,7 @@ public class NetworkServer {
 
    public void ioError(IOException e) {
       System.err.println("Error: I/O -- " + e.getMessage());
-      System.exit(RC_ERR_SOCKIO);
+      System.exit(ExitCodes.SOCKIO);
    }
 
    public void run() {
@@ -81,11 +75,11 @@ public class NetworkServer {
          in = sock.getInputStream();
 
          int ident = in.read();
-         if (ident == (int)isReceiver) {
+         if (ident == (isReceiver ? 1 : 0)) {
             System.err.println(
                String.format("Expected %s to connect, but something else happened. Quitting.", clientName)
             );
-            System.exit(RC_ERR_WRONG_CLIENT);
+            System.exit(ExitCodes.WRONG_CLIENT);
          }
       }
       catch (IOException e) {

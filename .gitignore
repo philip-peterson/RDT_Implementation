@@ -1,3 +1,6 @@
 *.class
 */*.class
 build/
+network
+sender
+receiver

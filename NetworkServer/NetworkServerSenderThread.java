@@ -1,6 +1,7 @@
-import java.io.BufferedReader;
-import java.io.PrintWriter;
-import java.net.Socket;
+import java.net.*;
+import java.io.*;
+import java.nio.channels.*;
+import java.nio.charset.*;
 
 public class NetworkServerSenderThread extends NetworkServerThread {
    public NetworkServerSenderThread(
@@ -9,7 +10,7 @@ public class NetworkServerSenderThread extends NetworkServerThread {
          OutputStream out,
          NetworkServer ns
       ) {
-      super(sock, reader, writer, ns);
+      super(sock, in, out, ns);
    }
 
    public void run() {
