@@ -3,7 +3,7 @@
 default: compile makelinks
 
 compile: src/*/*.java
-	mkdir build
+	mkdir -p build
 	javac src/*/*.java -d build/
 
 makelinks: compile
