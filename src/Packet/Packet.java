@@ -8,15 +8,36 @@ class Packet {
 
    static final int PAYLOAD = 256;
 
-   Packet(byte seq, byte id, int checksum, String content) {
+   private Packet(byte seq, byte id, int checksum, String content) {
       this.seq = seq;
       this.id = id;
       this.checksum = checksum;
       this.content = content;
    }
 
-   void isValid() {
+   public Packet(byte seq, byte id, String content) {
+      this.seq = seq;
+      this.id = id;
+      this.content = content;
+      this.recalculateChecksum();
+   }
 
+   boolean isCorrupt() {
+      return checksum != getCorrectChecksum();
+   }
+
+   int getCorrectChecksum() {
+      int checksum = 0;
+      byte[] data = content.getBytes();
+      int c = data.length;
+      for (int i = 0; i < c; i++) {
+         checksum += data[i];
+      }
+      return checksum;
+   }
+
+   void recalculateChecksum() {
+      this.checksum = this.getCorrectChecksum();
    }
 
    static Packet readFromStream(InputStream is) throws IOException {

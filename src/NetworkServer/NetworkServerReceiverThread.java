@@ -18,7 +18,7 @@ public class NetworkServerReceiverThread extends NetworkServerThread {
    }
 
    void run2() throws IOException {
-      int code = in.read();
+      int code = Util.unsignedToSigned(in.read());
       if (code == -1) {
          // exit
       }

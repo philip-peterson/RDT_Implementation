@@ -4,12 +4,6 @@ import java.nio.channels.*;
 import java.nio.charset.*;
 
 public class NetworkServer {
-   /* Static vars */
-
-      public static int SOCKET_NR = 65003;
-
-   /* End static vars */
-
    public Thread receiverThread = null;
    public Thread senderThread = null;
 
@@ -70,22 +64,25 @@ public class NetworkServer {
       OutputStream out = null;
       InputStream in = null;
 
+      int ident;
+
       try {
          out = sock.getOutputStream();
          in = sock.getInputStream();
 
-         int ident = in.read();
-         if (ident == (isReceiver ? 1 : 0)) {
-            System.err.println(
-               String.format("Expected %s to connect, but something else happened. Quitting.", clientName)
-            );
-            System.exit(ExitCodes.WRONG_CLIENT);
-         }
+         ident = in.read();
       }
       catch (IOException e) {
+         ident = -1;
          this.ioError(e);
       }
 
+      if (ident != (isReceiver ? ProgramCodes.RECEIVER : ProgramCodes.SENDER)) {
+         System.err.println(
+            String.format("Expected %s to connect, but something else happened. Quitting.", clientName)
+         );
+         System.exit(ExitCodes.WRONG_CLIENT);
+      }
 
       Thread thread;
       if (isReceiver) {
@@ -98,7 +95,14 @@ public class NetworkServer {
    }
 
    public static void main(String[] args ) {
-      ServerSocket ss = makeSocketOrDie(SOCKET_NR);
+
+      if (args.length != 1) {
+         System.err.println("Usage: network PORT");
+         System.exit(ExitCodes.USAGE);
+      }
+      int port = Integer.parseInt(args[0]);
+
+      ServerSocket ss = makeSocketOrDie(port);
       NetworkServer ns = new NetworkServer(ss);
       ns.run();
    }

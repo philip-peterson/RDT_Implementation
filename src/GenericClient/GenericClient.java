@@ -9,23 +9,24 @@ public class GenericClient {
    protected int port;
    protected OutputStream out;
    protected InputStream in;
+   protected Socket sock;
 
-   public void run(String host, int port) {
-      Socket clientSocket = null;
+   public void run() {
+      sock = null;
+
       try {
-         clientSocket = new Socket(host, port);
+         sock = new Socket(host, port);
       }
       catch (UnknownHostException e) {
-         System.err.println("Error: Unknown host. Exiting.");
-         System.exit(ExitCodes.UNKNOWN_HOST);
+         ExitCodes.ExitWithMessage(ExitCodes.UNKNOWN_HOST);
       }
       catch (IOException e) {
          this.ioError();
       }
 
       try {
-         out = clientSocket.getOutputStream();
-         in = clientSocket.getInputStream();
+         out = sock.getOutputStream();
+         in = sock.getInputStream();
       }
       catch (IOException e) {
          this.ioError();
