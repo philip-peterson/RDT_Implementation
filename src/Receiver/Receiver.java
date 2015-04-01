@@ -11,6 +11,7 @@ public class Receiver extends GenericClient {
       super(host, port);
    }
 
+
    public void run() {
       super.run();
 
@@ -25,9 +26,7 @@ public class Receiver extends GenericClient {
       try {
          while(true) {
             Packet rcvpkt;
-            System.out.println("waiting for packet");
             rcvpkt = rdt_rcv();
-            System.out.println("Got packet"+rcvpkt.seq+" (id="+rcvpkt.id+", checksum="+rcvpkt.checksum+", msg="+rcvpkt.content+")!!");
          }
       }
       catch (IOException e) {
@@ -36,35 +35,41 @@ public class Receiver extends GenericClient {
 
    }
 
+   private int _pktCount = 0;
    private int _curSeq = 0;
    Packet rdt_rcv() throws IOException {
       Packet pkt;
       while(true) {
-         System.out.println("Waiting in rdt_rcv...");
          int wantsExit = Util.unsignedToSigned(in.read());
          System.out.println(wantsExit);
          if (wantsExit == -1) {
             System.out.println("Exiting successfully.");
             System.exit(0);
          }
-         System.out.println("About to receive packet");
          pkt = Packet.readFromStream(in);
-         System.out.println("got it");
+         _pktCount++;
+         System.out.println(
+            "Waiting "
+               + _curSeq + ", " + _pktCount
+               + ", " + pkt.id + " " + pkt.checksum + " " + pkt.content + ", ACK" + (1-_curSeq)
+         );
+
          if (pkt.isCorrupt()) {
-            System.out.println("Received corrupt Packet (seq="+_curSeq+",id="+pkt.id+",msg="+pkt.content+"). Sending other ack.");
             Ack ack = new Ack((byte)(1 - _curSeq));
             ack.writeToStreamAndFlush(out);
             continue;
          }
          else {
             Ack ack = new Ack(pkt.seq);
-            _curSeq = 1 - pkt.seq;
             // don't bother with sending the "QUIT" flag; the receiver never sends these, only the sender
             ack.writeToStreamAndFlush(out);
-            break;
+         }
+
+         if (pkt.seq == _curSeq) {
+            _curSeq = 1 - pkt.seq;
+            return pkt;
          }
       }
-      return pkt;
    }
 
    public static void main(String[] args) {
