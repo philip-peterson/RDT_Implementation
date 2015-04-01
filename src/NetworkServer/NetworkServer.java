@@ -76,7 +76,6 @@ public class NetworkServer {
          Ack ack = this.ackQueue.poll();
          if (ack != null) {
             System.out.println("Ack transferred");
-            senderThread.out.write(Util.signedToUnsigned(0)); // Indicate we don't want to QUIT
             ack.writeToStreamAndFlush(senderThread.out);
          }
 
@@ -85,7 +84,6 @@ public class NetworkServer {
             System.out.println("Packet transferring");
             receiverThread.out.write(Util.signedToUnsigned(0)); // Indicate we don't want to QUIT
             p.writeToStreamAndFlush(receiverThread.out);
-            receiverThread.out.flush();
             System.out.println("Packet transferred for real");
          }
 

@@ -51,7 +51,10 @@ public class Receiver extends GenericClient {
          pkt = Packet.readFromStream(in);
          System.out.println("got it");
          if (pkt.isCorrupt()) {
-            System.out.println("Received corrupt Packet (seq="+_curSeq+"). Waiting...");
+            System.out.println("Received corrupt Packet (seq="+_curSeq+",id="+pkt.id+",msg="+pkt.content+"). Sending other ack.");
+            Ack ack = new Ack((byte)(1 - _curSeq));
+            ack.writeToStreamAndFlush(out);
+            continue;
          }
          else {
             Ack ack = new Ack(pkt.seq);

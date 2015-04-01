@@ -63,12 +63,6 @@ public class Sender extends GenericClient {
    }
 
    private Ack rdt_rcv() throws IOException {
-      int wantsExit = Util.unsignedToSigned(in.read());
-      if (wantsExit == -1) {
-         System.out.println("Exiting successfully.");
-         System.exit(0);
-         return null;
-      }
       Ack rcvpkt = Ack.readFromStream(in);
 
       return rcvpkt;
@@ -96,6 +90,7 @@ public class Sender extends GenericClient {
 
          if (rcvpkt.isCorrupt()) {
             System.out.println("Received corrupt ACK. resending...");
+            continue;
          }
          else if (rcvpkt.seq == 1-_curSeq) {
             System.out.println("Received ACK"+(1-_curSeq)+" when I was expecting an ACK"+_curSeq+". resending...");

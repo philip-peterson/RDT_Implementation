@@ -27,7 +27,7 @@ public class NetworkServerSenderThread extends NetworkServerThread {
 
          Packet p = Packet.readFromStream(in);
          double rand = r.nextDouble();
-         if (true || rand < .5) {
+         if (rand < .5) {
             // PASS -- send it on through
             System.out.println("packet Will PASS");
             ns.packetQueue.add(p);
