@@ -26,6 +26,10 @@ class Packet {
       return checksum != getCorrectChecksum();
    }
 
+   boolean isFinal() {
+      return content.endsWith(".");
+   }
+
    void corruptify() {
       recalculateChecksum();
       checksum += 1;

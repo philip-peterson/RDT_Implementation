@@ -1,6 +1,7 @@
 import java.net.*;
 import java.io.*;
 import java.nio.charset.*;
+import java.util.*;
 
 public class Receiver extends GenericClient {
 
@@ -36,6 +37,8 @@ public class Receiver extends GenericClient {
    }
 
    private int _pktCount = 0;
+   private boolean msgPrinted = false;
+   private ArrayList<String> segments = new ArrayList<String>();
    private int _curSeq = 0;
    Packet rdt_rcv() throws IOException {
       Packet pkt;
@@ -66,6 +69,17 @@ public class Receiver extends GenericClient {
          }
 
          if (pkt.seq == _curSeq) {
+            if (pkt.id == segments.size()) {
+               segments.add(pkt.content);
+            }
+            if (!msgPrinted && pkt.isFinal()) {
+               msgPrinted = true;
+               System.out.print("Message: ");
+               for (Iterator<String> it = segments.iterator(); it.hasNext(); ) {
+                  System.out.print(it.next() + " ");
+               }
+               System.out.println();
+            }
             _curSeq = 1 - pkt.seq;
             return pkt;
          }
