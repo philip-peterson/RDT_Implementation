@@ -2,10 +2,11 @@ import java.net.*;
 import java.io.*;
 import java.nio.channels.*;
 import java.nio.charset.*;
+import java.util.concurrent.*;
 
 public class NetworkServer {
-   public Thread receiverThread = null;
-   public Thread senderThread = null;
+   public NetworkServerThread receiverThread = null;
+   public NetworkServerThread senderThread = null;
 
    private static ServerSocket makeSocketOrDie(int port) {
       ServerSocket s = null;
@@ -30,8 +31,7 @@ public class NetworkServer {
                |IllegalBlockingModeException
             e
          ) {
-         System.err.println("Error: Could not accept connection: " + e.getMessage());
-         System.exit(ExitCodes.SOCKACCEPT);
+         ExitCodes.ExitWithMessage(ExitCodes.SOCKACCEPT, e);
       }
       return s;
    }
@@ -43,13 +43,52 @@ public class NetworkServer {
    }
 
    public void ioError(IOException e) {
-      System.err.println("Error: I/O -- " + e.getMessage());
-      System.exit(ExitCodes.SOCKIO);
+      ExitCodes.ExitWithMessage(ExitCodes.SOCKIO, e);
    }
 
    public void run() {
       doAwaitConnection(true);
       doAwaitConnection(false);
+
+      try {
+         mainLoop();
+      }
+      catch (IOException e) {
+         ioError(e);
+      }
+
+   }
+
+   void mainLoop() throws IOException {
+      while (true) {
+         // Main loop
+
+         if (wantsExit) {
+            System.out.println("Sender wants to quit, telling receiver to disconnect.");
+            receiverThread.out.write(Util.signedToUnsigned(-1));
+            receiverThread.out.flush();
+            receiverThread.sock.close();
+            System.out.println("Exiting successfully.");
+            System.exit(0);
+         }
+
+         Ack ack = this.ackQueue.poll();
+         if (ack != null) {
+            System.out.println("Ack transferred");
+            senderThread.out.write(Util.signedToUnsigned(0)); // Indicate we don't want to QUIT
+            ack.writeToStreamAndFlush(senderThread.out);
+         }
+
+         Packet p = this.packetQueue.poll();
+         if (p != null) {
+            System.out.println("Packet transferring");
+            receiverThread.out.write(Util.signedToUnsigned(0)); // Indicate we don't want to QUIT
+            p.writeToStreamAndFlush(receiverThread.out);
+            receiverThread.out.flush();
+            System.out.println("Packet transferred for real");
+         }
+
+      }
    }
 
    /**
@@ -84,15 +123,21 @@ public class NetworkServer {
          System.exit(ExitCodes.WRONG_CLIENT);
       }
 
-      Thread thread;
+      NetworkServerThread thread;
       if (isReceiver) {
          thread = new NetworkServerReceiverThread(sock, in, out, this);
+         receiverThread = thread;
       }
       else {
          thread = new NetworkServerSenderThread(sock, in, out, this);
+         senderThread = thread;
       }
       thread.start();
    }
+
+   protected ConcurrentLinkedQueue<Ack> ackQueue = new ConcurrentLinkedQueue<Ack>();
+   protected ConcurrentLinkedQueue<Packet> packetQueue = new ConcurrentLinkedQueue<Packet>();
+   protected boolean wantsExit = false;
 
    public static void main(String[] args ) {
 
@@ -105,5 +150,6 @@ public class NetworkServer {
       ServerSocket ss = makeSocketOrDie(port);
       NetworkServer ns = new NetworkServer(ss);
       ns.run();
+
    }
 }

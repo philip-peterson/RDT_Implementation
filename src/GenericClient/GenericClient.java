@@ -7,9 +7,9 @@ public class GenericClient {
    /* protected vars */
    protected String host;
    protected int port;
-   protected OutputStream out;
-   protected InputStream in;
-   protected Socket sock;
+   public OutputStream out;
+   public InputStream in;
+   public Socket sock;
 
    public void run() {
       sock = null;

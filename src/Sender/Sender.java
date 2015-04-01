@@ -46,11 +46,14 @@ public class Sender extends GenericClient {
          for (byte i = 0; i < numWords; i++) {
                rdt_send(words[i], i);
          }
+         out.write(Util.signedToUnsigned(-1)); // We want to QUIT now. :)
+         out.flush();
       }
       catch (IOException e) {
          ioError();
       }
 
+      System.out.println("Exiting successfully.");
    }
 
    private Ack rdt_rcv() throws IOException {
@@ -72,8 +75,7 @@ public class Sender extends GenericClient {
 
       System.out.println("Writing #" + id + " to stream.");
       out.write(Util.signedToUnsigned(0)); // Indicate we do not wish to QUIT
-      sndpkt.writeToStream(out);
-      out.flush();
+      sndpkt.writeToStreamAndFlush(out);
 
       Ack rcvpkt;
       while (true) {
@@ -86,7 +88,7 @@ public class Sender extends GenericClient {
          }
          else if (rcvpkt.isTimeoutAck()) {
             System.out.println("#" + id + " timed out, resending.");
-            sndpkt.writeToStream(out);
+            sndpkt.writeToStreamAndFlush(out);
          }
          else {
             System.out.println("#" + id + " sent successfully.");

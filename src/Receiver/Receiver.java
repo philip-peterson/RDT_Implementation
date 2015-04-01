@@ -25,8 +25,9 @@ public class Receiver extends GenericClient {
       try {
          while(true) {
             Packet rcvpkt;
+            System.out.println("waiting for packet");
             rcvpkt = rdt_rcv();
-            System.out.println("Got packet "+rcvpkt.seq+"!!");
+            System.out.println("Got packet"+rcvpkt.seq+" (id="+rcvpkt.id+")!!");
          }
       }
       catch (IOException e) {
@@ -39,20 +40,24 @@ public class Receiver extends GenericClient {
    Packet rdt_rcv() throws IOException {
       Packet pkt;
       while(true) {
+         System.out.println("Waiting in rdt_rcv...");
          int wantsExit = Util.unsignedToSigned(in.read());
+         System.out.println(wantsExit);
          if (wantsExit == -1) {
             System.out.println("Exiting successfully.");
             System.exit(0);
          }
+         System.out.println("About to receive packet");
          pkt = Packet.readFromStream(in);
+         System.out.println("got it");
          if (!pkt.isCorrupt()) {
             System.out.println("Received corrupt Packet (seq="+_curSeq+"). Waiting...");
          }
          else {
             Ack ack = new Ack(pkt.seq);
             _curSeq = 1 - pkt.seq;
-            out.write(Util.signedToUnsigned(0)); // indicate we do not want to QUIT
-            ack.writeToStream(out);
+            // don't bother with sending the "QUIT" flag; the receiver never sends these, only the sender
+            ack.writeToStreamAndFlush(out);
             break;
          }
       }

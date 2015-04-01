@@ -26,6 +26,11 @@ class Packet {
       return checksum != getCorrectChecksum();
    }
 
+   void corruptify() {
+      recalculateChecksum();
+      checksum += 1;
+   }
+
    int getCorrectChecksum() {
       int checksum = 0;
       byte[] data = content.getBytes();
@@ -58,7 +63,7 @@ class Packet {
       return new Packet(seq, id, checksum, sb.toString());
    }
 
-   boolean writeToStream(OutputStream os) {
+   void writeToStreamAndFlush(OutputStream os) throws IOException {
       byte[] data = new byte[PAYLOAD];
       int i;
 
@@ -69,17 +74,11 @@ class Packet {
          data[i] = 0;
       }
 
-      try {
-         DataOutputStream dos = new DataOutputStream(os);
-         dos.writeByte(seq);
-         dos.writeByte(id);
-         dos.writeInt(checksum);
-         dos.write(data, 0, PAYLOAD);
-         dos.flush();
-      }
-      catch (IOException e) {
-         return false;
-      }
-      return true;
+      DataOutputStream dos = new DataOutputStream(os);
+      dos.writeByte(seq);
+      dos.writeByte(id);
+      dos.writeInt(checksum);
+      dos.write(data, 0, PAYLOAD);
+      dos.flush();
    }
 }

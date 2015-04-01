@@ -14,21 +14,19 @@ class Ack {
       this.checksum = 0;
    }
 
+   public void corruptify() {
+      checksum = 1;
+   }
+
    public boolean isCorrupt() {
       return checksum != 0;
    }
 
-   public boolean writeToStream(OutputStream os) {
-      try {
-         DataOutputStream dos = new DataOutputStream(os);
-         dos.writeByte(seq);
-         dos.writeByte(checksum);
-         dos.flush();
-      }
-      catch (IOException e) {
-         return false;
-      }
-      return true;
+   public void writeToStreamAndFlush(OutputStream os) throws IOException {
+      DataOutputStream dos = new DataOutputStream(os);
+      dos.writeByte(seq);
+      dos.writeByte(checksum);
+      dos.flush();
    }
 
    public boolean isTimeoutAck() {

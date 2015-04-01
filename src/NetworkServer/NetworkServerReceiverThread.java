@@ -2,6 +2,7 @@ import java.net.*;
 import java.io.*;
 import java.nio.channels.*;
 import java.nio.charset.*;
+import java.util.*;
 
 public class NetworkServerReceiverThread extends NetworkServerThread {
    public NetworkServerReceiverThread(
@@ -13,27 +14,39 @@ public class NetworkServerReceiverThread extends NetworkServerThread {
       super(sock, in, out, ns);
    }
 
-   Packet rdt_rcv() throws IOException {
-      return Packet.readFromStream(in);
-   }
+   private Random r = new Random();
 
    void run2() throws IOException {
-      int code = Util.unsignedToSigned(in.read());
-      if (code == -1) {
-         // exit
+      while(true) {
+         Ack ack = Ack.readFromStream(in);
+         double rand = r.nextDouble();
+         if (true || rand < .5) {
+            // PASS -- send it on through
+            System.out.println("Will PASS");
+            ns.ackQueue.add(ack);
+         }
+         else if (rand < .75) {
+            // CORRUPT
+            System.out.println("Will CORRUPT");
+            ack.corruptify();
+            ns.ackQueue.add(ack);
+         }
+         else {
+            // DROP -- pretend it got lost (do nothing!)
+            System.out.println("Will DROP");
+         }
       }
-
-      Packet rcvpkt;
-      rcvpkt = rdt_rcv();
    }
 
    public void run() {
       try {
          run2();
       }
+      catch (SocketException e) {
+         ExitCodes.ExitWithMessage(ExitCodes.SOCKBROKEN);
+      }
       catch (IOException e) {
-         System.err.println("I/O error.");
-         System.exit(ExitCodes.SOCKIO);
+         ExitCodes.ExitWithMessage(ExitCodes.SOCKIO);
       }
    }
 }
