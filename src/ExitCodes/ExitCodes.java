@@ -11,12 +11,12 @@ class ExitCodes {
    public static int WRONG_CLIENT = 300;
 
    public static void ExitWithMessage(int code) {
-      System.err.println("Error!");
+      System.err.println("Error! "+code);
       System.exit(code);
    }
 
    public static void ExitWithMessage(int code, Exception e) {
-      System.err.println("Error!");
+      System.err.println("Error! " + code);
       System.err.println("(Specifically: " + e.getMessage() + ")");
       System.exit(code);
    }

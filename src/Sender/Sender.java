@@ -95,14 +95,15 @@ public class Sender extends GenericClient {
          }
 
          if (rcvpkt.isCorrupt()) {
-            System.out.println("Received corrupt ACK. Waiting...");
+            System.out.println("Received corrupt ACK. resending...");
          }
          else if (rcvpkt.seq == 1-_curSeq) {
-            System.out.println("Received ACK"+(1-_curSeq)+" when I was expecting an ACK"+_curSeq+". Waiting...");
+            System.out.println("Received ACK"+(1-_curSeq)+" when I was expecting an ACK"+_curSeq+". resending...");
+            continue;
          }
          else if (rcvpkt.isTimeoutAck()) {
             System.out.println("#" + id + " timed out, resending.");
-            sndpkt.writeToStreamAndFlush(out);
+            continue;
          }
          else {
             System.out.println("#" + id + " sent successfully.");

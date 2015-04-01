@@ -43,6 +43,7 @@ public class NetworkServer {
    }
 
    public void ioError(IOException e) {
+      System.out.println(e.getMessage());
       ExitCodes.ExitWithMessage(ExitCodes.SOCKIO, e);
    }
 

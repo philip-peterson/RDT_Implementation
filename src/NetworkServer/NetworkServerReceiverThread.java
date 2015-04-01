@@ -43,7 +43,9 @@ public class NetworkServerReceiverThread extends NetworkServerThread {
          run2();
       }
       catch (SocketException e) {
-         ExitCodes.ExitWithMessage(ExitCodes.SOCKBROKEN);
+         if (!ns.wantsExit) {
+            ExitCodes.ExitWithMessage(ExitCodes.SOCKBROKEN);
+         }
       }
       catch (IOException e) {
          ExitCodes.ExitWithMessage(ExitCodes.SOCKIO);
