@@ -1,0 +1,42 @@
+Philip Peterson
+<other details redacted>
+
+How to compile
+==============
+Simply run "make".
+
+How to run
+==========
+There are detailed instructions in the README, but in general the
+files ./network, ./receiver, and ./sender work as prescribed in the
+assignment. They must be started in that order, however. Each of those
+files should run on all (sand,thunder,storm) environments.
+
+Description of code structure
+=============================
+
+For the network, there are three threads. Each of the two child threads
+constantly read from sockets and insert any Packets or Acks into queues
+that are shared by the three threads. The main thread polls this queue 
+and takes action on any Acks or Packets, forwarding them to the
+receiver/sender. The actual filtering (dice roll) of the Packets/Acks is
+done in the child threads.
+
+The receiver and sender work in similar ways. They have a main loop which
+reads from the network socket and takes action in various ways according to
+the RDT 3.0 protocol.
+
+Differences/Limitations
+=======================
+
+I was not certain how it was desired for us to handle ACKs that got dropped,
+since a DROP message cannot be sent to the receiver (as it does not read ACKs)
+so I simply have them time out. This adds some execution time but is a simple
+approach.
+
+I believe my program may differ from the solutions', as each program only has
+two "states", since I have consolidated a few of the states logically. As such,
+whenever my program prints the program state, it will only print a 0 or 1 depending
+on the value of _seqNum.
+
+Other than that, I do not believe there are any bugs.
