@@ -19,21 +19,22 @@ public class NetworkServerReceiverThread extends NetworkServerThread {
    void run2() throws IOException {
       while(true) {
          Ack ack = Ack.readFromStream(in);
+         System.out.print("Received: ACK"+ack.seq+", ");
          double rand = r.nextDouble();
          if (rand < .5) {
             // PASS -- send it on through
-            System.out.println("ack Will PASS");
+            System.out.println("PASS");
             ns.ackQueue.add(ack);
          }
          else if (true || rand < .75) {
             // CORRUPT
-            System.out.println("ack Will CORRUPT");
+            System.out.println("CORRUPT");
             ack.corruptify();
             ns.ackQueue.add(ack);
          }
          else {
             // DROP -- pretend it got lost (do nothing!)
-            System.out.println("ack Will DROP");
+            System.out.println("DROP");
          }
       }
    }
