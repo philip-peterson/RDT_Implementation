@@ -26,7 +26,7 @@ public class NetworkServerReceiverThread extends NetworkServerThread {
             System.out.println("PASS");
             ns.ackQueue.add(ack);
          }
-         else if (true || rand < .75) {
+         else if (rand < .75) {
             // CORRUPT
             System.out.println("CORRUPT");
             ack.corruptify();

@@ -33,7 +33,7 @@ public class NetworkServerSenderThread extends NetworkServerThread {
             System.out.println("PASS");
             ns.packetQueue.add(p);
          }
-         else if (true || rand < .75) {
+         else if (rand < .75) {
             // CORRUPT
             System.out.println("CORRUPT");
             p.corruptify();
