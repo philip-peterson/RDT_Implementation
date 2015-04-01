@@ -65,7 +65,6 @@ public class NetworkServer {
          // Main loop
 
          if (wantsExit) {
-            System.out.println("Sender wants to quit, telling receiver to disconnect.");
             receiverThread.out.write(Util.signedToUnsigned(-1));
             receiverThread.out.flush();
             receiverThread.sock.close();
@@ -75,16 +74,13 @@ public class NetworkServer {
 
          Ack ack = this.ackQueue.poll();
          if (ack != null) {
-            System.out.println("Ack transferred");
             ack.writeToStreamAndFlush(senderThread.out);
          }
 
          Packet p = this.packetQueue.poll();
          if (p != null) {
-            System.out.println("Packet transferring");
             receiverThread.out.write(Util.signedToUnsigned(0)); // Indicate we don't want to QUIT
             p.writeToStreamAndFlush(receiverThread.out);
-            System.out.println("Packet transferred for real");
          }
 
       }

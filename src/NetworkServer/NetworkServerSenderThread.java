@@ -37,7 +37,6 @@ public class NetworkServerSenderThread extends NetworkServerThread {
             // CORRUPT
             System.out.println("CORRUPT");
             p.corruptify();
-            System.out.println("The packet "+p.id+" is now checksum=" + p.checksum);
             ns.packetQueue.add(p);
          }
          else {

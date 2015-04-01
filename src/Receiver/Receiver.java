@@ -44,7 +44,6 @@ public class Receiver extends GenericClient {
       Packet pkt;
       while(true) {
          int wantsExit = Util.unsignedToSigned(in.read());
-         System.out.println(wantsExit);
          if (wantsExit == -1) {
             System.out.println("Exiting successfully.");
             System.exit(0);
