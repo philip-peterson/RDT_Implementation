@@ -32,12 +32,17 @@ class Packet {
    }
 
    int getCorrectChecksum() {
+      System.out.println("-------------------------------");
+      System.out.println("I am about to calculate the checksum");
       int checksum = 0;
       byte[] data = content.getBytes();
       int c = data.length;
       for (int i = 0; i < c; i++) {
-         checksum += data[i];
+         System.out.println("I see '"+(char)(data[i])+"' -- so increment by " + data[i]);
+         checksum += data[i]; // Leave one space for the corrupted case
       }
+      System.out.println("Done! CS = " + checksum);
+      System.out.println("-------------------------------");
       return checksum;
    }
 
@@ -49,7 +54,7 @@ class Packet {
       DataInputStream dis = new DataInputStream(is);
       byte seq = dis.readByte();
       byte id = dis.readByte();
-      byte checksum = (byte)dis.readInt();
+      int checksum = dis.readInt();
       byte[] data = new byte[PAYLOAD];
       dis.readFully(data, 0, PAYLOAD);
 

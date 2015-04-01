@@ -22,18 +22,18 @@ public class NetworkServerReceiverThread extends NetworkServerThread {
          double rand = r.nextDouble();
          if (true || rand < .5) {
             // PASS -- send it on through
-            System.out.println("Will PASS");
+            System.out.println("ack Will PASS");
             ns.ackQueue.add(ack);
          }
-         else if (rand < .75) {
+         else if (true || rand < .75) {
             // CORRUPT
-            System.out.println("Will CORRUPT");
+            System.out.println("ack Will CORRUPT");
             ack.corruptify();
             ns.ackQueue.add(ack);
          }
          else {
             // DROP -- pretend it got lost (do nothing!)
-            System.out.println("Will DROP");
+            System.out.println("ack Will DROP");
          }
       }
    }

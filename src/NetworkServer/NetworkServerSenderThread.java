@@ -29,18 +29,19 @@ public class NetworkServerSenderThread extends NetworkServerThread {
          double rand = r.nextDouble();
          if (true || rand < .5) {
             // PASS -- send it on through
-            System.out.println("Will PASS");
+            System.out.println("packet Will PASS");
             ns.packetQueue.add(p);
          }
-         else if (rand < .75) {
+         else if (true || rand < .75) {
             // CORRUPT
-            System.out.println("Will CORRUPT");
+            System.out.println("packet Will CORRUPT");
             p.corruptify();
+            System.out.println("The packet "+p.id+" is now checksum=" + p.checksum);
             ns.packetQueue.add(p);
          }
          else {
             // DROP -- pretend it got dropped by sending a timeout packet.
-            System.out.println("Will DROP");
+            System.out.println("packet Will DROP");
             Ack timeout = new Ack((byte)2);
             ns.ackQueue.add(timeout);
          }

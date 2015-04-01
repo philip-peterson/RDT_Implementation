@@ -27,7 +27,7 @@ public class Receiver extends GenericClient {
             Packet rcvpkt;
             System.out.println("waiting for packet");
             rcvpkt = rdt_rcv();
-            System.out.println("Got packet"+rcvpkt.seq+" (id="+rcvpkt.id+")!!");
+            System.out.println("Got packet"+rcvpkt.seq+" (id="+rcvpkt.id+", checksum="+rcvpkt.checksum+", msg="+rcvpkt.content+")!!");
          }
       }
       catch (IOException e) {
@@ -50,7 +50,7 @@ public class Receiver extends GenericClient {
          System.out.println("About to receive packet");
          pkt = Packet.readFromStream(in);
          System.out.println("got it");
-         if (!pkt.isCorrupt()) {
+         if (pkt.isCorrupt()) {
             System.out.println("Received corrupt Packet (seq="+_curSeq+"). Waiting...");
          }
          else {

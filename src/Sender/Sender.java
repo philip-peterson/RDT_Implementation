@@ -6,7 +6,6 @@ import java.nio.charset.*;
 public class Sender extends GenericClient {
 
    public Path path;
-   private Socket clientSocket = null;
 
    public Sender(String host, int port, Path path) {
       super(host, port);
@@ -15,6 +14,13 @@ public class Sender extends GenericClient {
 
    public void run() {
       super.run();
+      
+      try {
+         sock.setSoTimeout(2000);
+      }
+      catch (SocketException e) {
+         ioError();
+      }
 
       try {
          out.write(ProgramCodes.SENDER);
@@ -74,12 +80,20 @@ public class Sender extends GenericClient {
       Packet sndpkt = new Packet((byte)_curSeq, id, data);
 
       System.out.println("Writing #" + id + " to stream.");
-      out.write(Util.signedToUnsigned(0)); // Indicate we do not wish to QUIT
-      sndpkt.writeToStreamAndFlush(out);
 
       Ack rcvpkt;
       while (true) {
-         rcvpkt = rdt_rcv();
+         out.write(Util.signedToUnsigned(0)); // Indicate we do not wish to QUIT
+         sndpkt.writeToStreamAndFlush(out);
+
+         try {
+            rcvpkt = rdt_rcv();
+         }
+         catch (SocketTimeoutException e) {
+            System.out.println("Timed out, resending");
+            continue;
+         }
+
          if (rcvpkt.isCorrupt()) {
             System.out.println("Received corrupt ACK. Waiting...");
          }
