@@ -1,3 +1,8 @@
+Summary
+=======
+
+This repository represents a demonstrative impementation of the Reliable Data Transfer algorithm. Network lossiness is emulated in order to test the reliability aspect of the algorithm.
+
 To build
 ========
 
@@ -30,7 +35,6 @@ Sender
 --------
 
 Start this client second; otherwise, the apocalyptic scenario described above applies.
-This should be run on storm.cise.ufl.edu
 ```
 ./sender localhost 65003 test_poem.txt
 ```
